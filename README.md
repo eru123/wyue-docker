@@ -1,2 +1,2 @@
 # wyue-docker
-Wyue Application Specialized Docker Container
+Wyue PHP Applications Specialized Docker Container
