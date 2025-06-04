@@ -36,5 +36,9 @@ if [ -f "composer.json" ]; then
     composer install --no-interaction --no-progress --optimize-autoloader
 fi
 
+if [ -d "/var/www/html/uploads" ]; then
+    chown -R www-data:www-data /var/www/html/uploads
+fi
+
 # cd $PWD && printenv > .env # Uncomment if you want to use .env file
 /usr/local/bin/httpd-foreground
