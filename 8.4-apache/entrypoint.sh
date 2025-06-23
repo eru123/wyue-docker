@@ -40,5 +40,5 @@ if [ -d "/var/www/html/uploads" ]; then
     chown -R www-data:www-data /var/www/html/uploads
 fi
 
-# cd $PWD && printenv > .env # Uncomment if you want to use .env file
+cd $PWD && printenv > .env
 /usr/local/bin/httpd-foreground
