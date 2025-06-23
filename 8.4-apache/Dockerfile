@@ -33,6 +33,7 @@ RUN set -eux; \
 		ca-certificates \
 		perl \
 	;
+
 RUN set -eux; \
 	\
 	apk add --no-cache --virtual .build-deps \
@@ -193,7 +194,39 @@ RUN chmod +x /usr/local/bin/httpd-foreground
 WORKDIR /var/www/html
 
 # Install necessary build dependencies and other utilities
-RUN apk add --no-cache autoconf build-base pkgconf libxml2-dev openssl-dev curl-dev libzip-dev freetype-dev libjpeg-turbo-dev libwebp-dev sqlite-dev apache2-dev icu-dev oniguruma-dev apr-dev curl bash perl apr-util-dev libpng-dev libzip-dev
+# Re-evaluate this line to ensure all GD dependencies are explicitly listed
+# You already have libjpeg-turbo-dev, libwebp-dev, libpng-dev, freetype-dev, zlib-dev (from httpd build-deps)
+# Also ensuring runtime libs are present just in case the dev versions don't pull them in directly for linking
+RUN apk add --no-cache \
+    autoconf \
+    build-base \
+    pkgconf \
+    libxml2-dev \
+    openssl-dev \
+    curl-dev \
+    libzip-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    sqlite-dev \
+    apache2-dev \
+    icu-dev \
+    oniguruma-dev \
+    apr-dev \
+    curl \
+    bash \
+    perl \
+    apr-util-dev \
+    libpng-dev \
+    libzip-dev \
+    # Ensure runtime dependencies for GD are also explicitly added if not covered by -dev packages
+    libjpeg-turbo \
+    libwebp \
+    libpng \
+    freetype \
+    zlib
+
+
 
 # Download and extract PHP source code
 RUN wget -O /tmp/php.tar.gz "https://www.php.net/distributions/php-${PHP_VERSION}.tar.gz" \
@@ -225,11 +258,11 @@ RUN cd $HOME/php-${PHP_VERSION} \
     --with-apxs2=/usr/local/apache2/bin/apxs \ 
     --with-libxml2 \
     --with-png \
-    --with-gd \
+    --enable-gd \ 
     --enable-soap \
     && make -j$(nproc) \
     && make install \
-    && rm -rf $HOME/php-${PHP_VERSION}/
+    && rm -rf $HOME/php-${PHP_VERSION}/ 
 
 # Copy PHP configuration
 COPY php.ini-development /usr/local/etc/php/php.ini-development
@@ -382,7 +415,7 @@ RUN echo "    ErrorLog /proc/self/fd/2" >> /usr/local/apache2/conf/httpd.conf
 RUN echo "    CustomLog /proc/self/fd/1 common" >> /usr/local/apache2/conf/httpd.conf
 RUN echo "</VirtualHost>" >> /usr/local/apache2/conf/httpd.conf
 
-RUN sed -i 's|;extension=gd|extension=gd|g' /usr/local/etc/php/php.ini
+# RUN sed -i 's|;extension=gd|extension=gd|g' /usr/local/etc/php/php.ini
 
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
