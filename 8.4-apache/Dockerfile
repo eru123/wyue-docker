@@ -11,10 +11,10 @@ LABEL org.opencontainers.image.description="Wyue Applications Specialized Docker
 # 8.4.27: security release (2026-10-21) — fixes CVE-2026-109618 &
 # CVE-2026-109619 (critical RCE), plus CVE-2026-17543/17544 from Aug.
 ENV PHP_VERSION=8.4.27
-ENV NODE_VERSION=22.15.0
+ENV NODE_VERSION=24.22.1
 ENV YARN_VERSION=1.22.22
-ENV HTTPD_VERSION=2.4.63
-ENV HTTPD_SHA256=88fc236ab99b2864b248de7d49a008ec2afd7551e64dce8b95f58f32f94c46ab
+ENV HTTPD_VERSION=2.4.69
+ENV HTTPD_SHA256=c5e6ebc66e349b87d7fc6916ae7cc2a808ed348003de134cf9e9d89d3e2cc73d
 ENV HTTPD_PATCHES=""
 
 RUN apk update && apk upgrade
@@ -285,7 +285,7 @@ RUN addgroup -g 1000 node \
         curl \
     && ARCH= OPENSSL_ARCH='linux*' && alpineArch="$(apk --print-arch)" \
       && case "${alpineArch##*-}" in \
-        x86_64) ARCH='x64' CHECKSUM="60198941802e88659bb3b30b9a45b694b1c695cf33c1ef58863f854996d11d5d" OPENSSL_ARCH=linux-x86_64;; \
+        x86_64) ARCH='x64' CHECKSUM="c9c0685740bbb89e836ff81af64d8582db53916cdf09131db482d1dc20f59c70" OPENSSL_ARCH=linux-x86_64;; \
         x86) OPENSSL_ARCH=linux-elf;; \
         aarch64) OPENSSL_ARCH=linux-aarch64;; \
         arm*) OPENSSL_ARCH=linux-armv4;; \
@@ -374,7 +374,7 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
 # Install pnpm
 # (self-installer via unpkg broke with pnpm 12's layout; corepack ships
 # with node and pins a stable pnpm onto PATH)
-RUN corepack enable && corepack prepare pnpm@10.18.3 --activate \
+RUN corepack enable && corepack prepare pnpm@12.15.0 --activate \
   && pnpm --version \
   && rm -rf /tmp/*
 
