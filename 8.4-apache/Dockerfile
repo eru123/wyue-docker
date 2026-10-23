@@ -8,7 +8,9 @@ LABEL org.opencontainers.image.authors="Jericho Aquino <jericho@skiddph.com>"
 LABEL org.opencontainers.image.description="Wyue Applications Specialized Docker Container"
 
 # versions
-ENV PHP_VERSION=8.4.6
+# 8.4.27: security release (2026-10-21) — fixes CVE-2026-109618 &
+# CVE-2026-109619 (critical RCE), plus CVE-2026-17543/17544 from Aug.
+ENV PHP_VERSION=8.4.27
 ENV NODE_VERSION=22.15.0
 ENV YARN_VERSION=1.22.22
 ENV HTTPD_VERSION=2.4.63
@@ -370,9 +372,9 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   && rm -rf /tmp/*
 
 # Install pnpm
-RUN apk add --no-cache --virtual .build-deps-pnpm curl \
-  && curl -fsSL https://unpkg.com/@pnpm/self-installer | node \
-  && apk del .build-deps-pnpm \
+# (self-installer via unpkg broke with pnpm 12's layout; corepack ships
+# with node and pins a stable pnpm onto PATH)
+RUN corepack enable && corepack prepare pnpm@10.18.3 --activate \
   && pnpm --version \
   && rm -rf /tmp/*
 
