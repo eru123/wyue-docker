@@ -2,7 +2,7 @@ FROM alpine:3.21
 
 LABEL maintainer="wyue"
 LABEL description="Wyue Applications Specialized Docker Container"
-LABEL org.opencontainers.image.source="https://github.com/wyue/wyue-docker"
+LABEL org.opencontainers.image.source="https://github.com/eru123/wyue-docker"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 LABEL org.opencontainers.image.authors="Jericho Aquino <jericho@skiddph.com>"
 LABEL org.opencontainers.image.description="Wyue Applications Specialized Docker Container"
